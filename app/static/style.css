@@ -1,0 +1,81 @@
+
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display|Ubuntu+Mono&display=swap');
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 10px;
+  width: 175px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 15px;
+  font-family:'Ubuntu Mono';
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.wrapper {
+ text-align: center;
+ color: #f3dfa2;
+ background-color: #003366;
+ background-color: #231f20;
+ 
+ }
+
+h1 {
+ line-height:1;
+ 
+}
+
+.header {
+	display:inline;
+	font-size:40;
+	text-align: center;
+	background-color: #003366;
+}
+
+body {
+ background-image: url(assets/ok.png);
+ font-family: 'Ubuntu Mono';
+ color: #231f20;
+
+}
+
+.underline {
+border-top: 1px solid; 
+}
+
+.inlineDiv > * {
+	display: inline-block;
+	
+}
+
+

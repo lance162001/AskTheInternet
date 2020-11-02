@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}" media="screen">
+<title>ASKTheInternet</title>
+
+</head>
+<body>
+{% block content %}
+    <h1>Ask The Internet<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>
+	
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+		<div class="wrapper">
+		<div class="inlineDiv">
+		
+		<p>
+            {{ form.answerOne.label }}<br>
+            {{ form.answerOne(size=32) }}
+        </p>
+		{% for error in form.answerOne.errors %}
+			<span style="color: red;">[{{ error }}]</span>
+		{% endfor %}
+        <p>
+            {{ form.question.label }}<br>
+            {{ form.question(size=32) }}
+        </p>
+        {% for error in form.question.errors %}
+			<span style="color: red;">[{{ error }}]</span>
+		{% endfor %}
+		<p>
+            {{ form.answerTwo.label }}<br>
+            {{ form.answerTwo(size=32) }}
+        </p>
+		{% for error in form.answerTwo.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+		{% endfor %}
+		</div>
+		</div>
+		<div class="inlineDiv">
+		<button class="button"><span>Submit Question</span></button> 
+		<p>When submitted, your question will be randomly available for anyone to answer for 48 hours
+		</p>
+		</div>
+	</form>
+	
+{% endblock %}
+
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+</body>
+</html>

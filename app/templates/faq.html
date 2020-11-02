@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}" media="screen">
+<title>FAQ|AskTheInternet</title>
+
+</head>
+<body>
+	
+	<h1> Frequently Answered Questions (that are still active)<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>	
+	<p> <i>"What's the point?"</i> : <b>morbid curiosity and boredom mostly.</b> </p>
+	<p><i>"I don't like how awful these questions are!"</i> : <b>There's a button for that.</b> </p>
+	<p><i>"Who are you, who are so wise in the ways of (computer) science?"</i> : <b>https://github.com/lance162001 , Discord: Ecnal#8924 </b></p>
+	{% for question in questions %}
+	<p></p>
+	<div class="wrapper">
+	<h2	style="display:inline;font-size:35px;"> {{ question.body }} </h2>
+	<p> {{question.answeredOne}} answers for: {{question.optionOne}} </p>
+	<p> {{question.answeredTwo}} answers for: {{question.optionTwo}} </p>
+	</div>
+	{% endfor %}
+
+		        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+
+	
+</body>
+</html>
+	

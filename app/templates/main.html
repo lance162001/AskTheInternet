@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}" media="screen">
+<title>AskTheInternet | Home</title>
+
+</head>
+<body>
+
+
+
+<div class="wrapper">
+	<h1 style="font-size:60px;"> Ask The Internet</h1>	
+	<h2> Ask or Answer any Question your Heart Desires </h2> <p>(at your own risk)</p>
+	<p> Developed by Lance Gruber</p>
+	{% if asked != 0 %}
+	<button onclick="window.location.href = 'review';"class="button"><span> Review </span></button>
+	{% if asked == 1 %}
+	<p> you have asked 1 question out of 5 (Questions have a 48 hour lifespan)</p>
+	{% else %}
+	<p> you have asked {{asked}} questions out of 5 (Questions have a 48 hour lifespan)</p>
+	{% endif %}
+	{% endif %}
+	<button onclick="window.location.href = 'faq';"class="button"><span> FAQ </span></button>
+	<button onclick="window.location.href = 'ask';"class="button"><span> Ask </span></button>
+	<button onclick="window.location.href = 'answer';"class="button"><span> Answer </span></button> 
+
+</div>
+	        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li style="color: red;">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+
+</body>
+</html>
