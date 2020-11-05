@@ -5,7 +5,7 @@ class User(db.Model):
     __tablename__= 'users'
     ip = db.Column(db.String(16), primary_key=True)
     asked = db.relationship('Question', backref='author', lazy='dynamic')
-    
+    qCount = db.Column(db.Integer, default=0)
     
     def __repr__(self):
         return '<User {}>'.format(self.ip)
@@ -45,8 +45,8 @@ class Question(db.Model):
 class Middle(db.Model):
     __tablename__= 'middle'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey('users.ip'))
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    user_id = db.Column(db.String(16), db.ForeignKey('users.ip'))
+    question_id = db.Column(db.String(37), db.ForeignKey('questions.id'))
 
     user = db.relationship(User, backref=db.backref("middle", cascade="all, delete-orphan"))
     question = db.relationship(Question, backref=db.backref("middle", cascade="all, delete-orphan"))

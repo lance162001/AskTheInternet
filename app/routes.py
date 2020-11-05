@@ -25,7 +25,7 @@ def ask():
         if qCount >= 5:
             return redirect('/')
             flash("Cannot ask more questions until current questions expire")
-        q = Question(id=str(uuid.uuid4().int),body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
+        q = Question(id=str(uuid.uuid4()),body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
         q.author=user
         db.session.add(q)
         db.session.commit()
@@ -99,22 +99,15 @@ def chooseQuestion():
     #filter out questions that user has made or has already seen, then take a random question. Ideally this will trend towards more popular stuff but for now this works
     q = db.session.query(Question).options(db.joinedload(Question.viewed))
     question = q.filter(and_(Question.author!=user, ~Question.viewed.contains(user) )).order_by(func.random()).first()
-    if question == None:
-        return None
-    while question.prune() and question != None:
-        db.session.remove(question)
-        db.session.commit()
-        q = db.session.query(Question).options(db.joinedload(Question.viewed))
-        question=q.filter(and_(Question.author!=user, ~Question.viewed.contains(user) )).order_by(func.random()).first()
-        if question == None:
-            return None
+
     return question
     
 def getUser():
     global user
     global qCount
-    userIP = str(request.remote_addr)
-    userIP = "googoogagaaaa"
+    userIP = str(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
+   # for testing
+   # userIP = "googoogagaaaa"
     user = db.session.query(User).filter_by(ip=userIP).first()
     if user is None:
         user = User(ip=userIP)
