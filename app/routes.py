@@ -71,8 +71,8 @@ def answer():
 @app.route('/review')
 def review():
     getUser()
-    a=db.session.query(Question).options(db.joinedload(Question.author))
-    asked=a.filter(Question.author==session['user'])
+    a=db.session.query(Question).options(db.joinedload(Question.author.ip))
+    asked=a.filter(Question.author.ip==session['user'])
     return render_template('review.html',questions=asked)
 
 @app.route('/faq')
@@ -86,6 +86,7 @@ def chooseQuestion():
 
     #filter out questions that user has made or has already seen, then take a random question. Ideally this will trend towards more popular stuff but for now this works
     q = db.session.query(Question).options(db.joinedload(Question.viewed))
+    user = db.session.query(User).filter_by(ip=session['user']).first()
     question = q.filter(and_(Question.author!=user, ~Question.viewed.contains(user) )).order_by(func.random()).first()
 
     return question
@@ -102,7 +103,7 @@ def getUser():
             user = User(ip=userIP)
             db.session.add(user)
             db.session.commit()
-    qCount=0
-    for q in user.asked:
-        qCount+=1
-    session['qCount']=qCount
+        qCount=0
+        for q in user.asked:
+            qCount+=1
+        session['qCount']=qCount
