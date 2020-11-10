@@ -29,10 +29,8 @@ class Question(db.Model):
     
     viewed = db.relationship('User', secondary="middle")
     
-    
     def __repr__(self):
         return '<Question {}>'.format(self.body)
-        
 
     def prune(self):
         if self.answeredOne + self.answeredTwo < self.dislikes and self.totalViews > 10:
@@ -40,7 +38,6 @@ class Question(db.Model):
         if self.timestamp+timedelta(days = 2) < datetime.utcnow():
             return True
         return False
-        
         
 class Middle(db.Model):
     __tablename__= 'middle'
