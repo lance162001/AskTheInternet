@@ -22,7 +22,7 @@ def ask():
             return redirect('/')
             flash("Cannot ask more questions until current questions expire")
         q = Question(body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
-        q.author=session['user']
+        q.author=db.session.query(User).filter_by(ip=session['user']).first()
         db.session.add(q)
         db.session.commit()
 
@@ -33,34 +33,40 @@ def ask():
 @app.route('/answer', methods=['GET','POST'])
 def answer():
     getUser()
-
     if session['initial']:
         session['initial']=False
-        session['question']=chooseQuestion()
-    if session['question'] == None:
-        flash("no available questions to answer!")
-        session['initial']=True
-        return redirect('/')
-    if request.method == 'POST':
-        session['question'].viewed.append(user)
-        if request.form['output'] == "1":
-            session['question'].answeredOne=Question.answeredOne+1
-            print("answeredOne+1")
-        elif request.form['output'] == "2":
-            session['question'].answeredTwo=Question.answeredTwo+1
-            print("answeredTwo+1")
-        elif request.form['output'] == "3":
-            session['question'].dislikes=Question.dislikes+1
-            print("dislikes+1")
-            
-        db.session.merge(session['question'])
-        db.session.commit()
-        session['question']=chooseQuestion()
-        if session['question'] == None:
+        question=chooseQuestion()
+        if question == None:
             flash("no available questions to answer!")
             session['initial']=True
             return redirect('/')
-    return render_template('answer.html',question=session['question'])
+    
+        session['question']=question.id
+    
+    if request.method == 'POST':
+        question = db.session.query(Question).filter_by(id=session['question']).first()
+        question.viewed.append(db.session.query(User).filter_by(ip=session['user']).first())
+        if request.form['output'] == "1":
+            question.answeredOne=Question.answeredOne+1
+            print("answeredOne+1")
+        elif request.form['output'] == "2":
+            question.answeredTwo=Question.answeredTwo+1
+            print("answeredTwo+1")
+        elif request.form['output'] == "3":
+            question.dislikes=Question.dislikes+1
+            print("dislikes+1")
+            
+        db.session.merge(question)
+        db.session.commit()
+        
+        question=chooseQuestion()
+        if question == None:
+            flash("no available questions to answer!")
+            session['initial']=True
+            return redirect('/')
+        session['question']=question.id
+        
+    return render_template('answer.html',question=question)
 
 @app.route('/review')
 def review():
@@ -85,17 +91,16 @@ def chooseQuestion():
     return question
     
 def getUser():
-    try:
-        print(session['user'])
-    except:
+    if 'user' not in session:
         session['initial']=True
         userIP = str(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
        # for testing
        # userIP = "googoogagaaaa"
-        session['user'] = db.session.query(User).filter_by(ip=userIP).first()
-        if session['user'] is None:
-            session['user'] = User(ip=userIP)
-            db.session.add(session['user'])
+        session['user'] = userIP
+        user = db.session.query(User).filter_by(ip=userIP).first()
+        if user is None:
+            user = User(ip=userIP)
+            db.session.add(user)
             db.session.commit()
     qCount=0
     for q in user.asked:
