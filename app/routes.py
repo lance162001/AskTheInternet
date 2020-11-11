@@ -2,17 +2,16 @@ from flask import flash, redirect, render_template, request, session
 from app import app, db
 from app.models import User,Question
 from app.forms import AskForm, AnswerForm
-import random      
+import random
 from sqlalchemy.sql.expression import and_, func
 import uuid
 
-        
 @app.route('/index')
 @app.route('/')
-def home(): 
+def home():
     getUser()
     return render_template('main.html',user=session['user'], asked=session['qCount'])
-    
+
 @app.route('/ask', methods=['GET','POST'])
 def ask():
     getUser()
@@ -20,10 +19,11 @@ def ask():
     if session['qCount'] >= 5:
             flash("Cannot ask more questions until current questions expire")
             return redirect('/')
-            
+
     if form.validate_on_submit():
-        q = Question(body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
+        q = Question(id=str(uuid.uuid4()),body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
         q.author=db.session.query(User).filter_by(ip=session['user']).first()
+        session['qCount']+=1
         db.session.add(q)
         db.session.commit()
 
@@ -41,9 +41,9 @@ def answer():
             flash("no available questions to answer!")
             session['initial']=True
             return redirect('/')
-    
+
         session['question']=question.id
-    
+
     if request.method == 'POST':
         question = db.session.query(Question).filter_by(id=session['question']).first()
         question.viewed.append(db.session.query(User).filter_by(ip=session['user']).first())
@@ -56,24 +56,24 @@ def answer():
         elif request.form['output'] == "3":
             question.dislikes=Question.dislikes+1
             print("dislikes+1")
-            
+
         db.session.merge(question)
         db.session.commit()
-        
+
         question=chooseQuestion()
         if question == None:
             flash("no available questions to answer!")
             session['initial']=True
             return redirect('/')
         session['question']=question.id
-        
+
     return render_template('answer.html',question=question)
 
 @app.route('/review')
 def review():
     getUser()
     a=db.session.query(Question).options(db.joinedload(Question.author))
-    asked=a.filter(Question.author.ip==session['user'])
+    asked=a.filter(Question.author==db.session.query(User).filter_by(ip=session['user']).first())
     return render_template('review.html',questions=asked)
 
 @app.route('/faq')
@@ -91,7 +91,7 @@ def chooseQuestion():
     question = q.filter(and_(Question.author!=user, ~Question.viewed.contains(user) )).order_by(func.random()).first()
 
     return question
-    
+
 def getUser():
     if 'user' not in session:
         session['initial']=True
@@ -99,7 +99,6 @@ def getUser():
        # for testing
        # userIP = "googoogagaaaa"
         session['user'] = userIP
-        qCount=0
         user = db.session.query(User).filter_by(ip=userIP).first()
         #if user's ip isn't in db, establish new user and commit to db
         if user is None:
@@ -107,7 +106,13 @@ def getUser():
             db.session.add(user)
             db.session.commit()
         #preload qCount in session dictionary
-        else:
-            for q in user.asked:
-                qCount+=1
+
+        qCount=0
+        for q in user.asked:
+            qCount+=1
         session['qCount']=qCount
+
+    qCount=0
+    for q in db.session.query(User).filter_by(ip=session['user']).first().asked:
+        qCount+=1
+    session['qCount'] = qCount
