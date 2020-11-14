@@ -35,7 +35,8 @@ def ask():
 def answer():
     getUser()
     if session['initial']:
-        session['initial']=False
+        session['initial']= False
+        session['previousQ'] = None
         question=chooseQuestion()
         if question == None:
             flash("no available questions to answer!")
@@ -47,6 +48,7 @@ def answer():
     if request.method == 'POST':
         question = db.session.query(Question).filter_by(id=session['question']).first()
         question.viewed.append(db.session.query(User).filter_by(ip=session['user']).first())
+        session['previousQ']="<br>"+str(question.answeredOne)+"</br>"+" : "+question.optionOne+" | "+question.optionTwo+" "+"<br>"+str(question.answeredTwo)+"</br>"
         if request.form['output'] == "1":
             question.answeredOne=Question.answeredOne+1
             print("answeredOne+1")
@@ -67,7 +69,7 @@ def answer():
             return redirect('/')
         session['question']=question.id
 
-    return render_template('answer.html',question=question)
+    return render_template('answer.html',question=question, responses=session['previousQ'])
 
 @app.route('/review')
 def review():

@@ -14,7 +14,7 @@
         {{ form.hidden_tag() }}
 		<div class="wrapper">
 		<div class="inlineDiv">
-		
+
 		<p>
             {{ form.answerOne.label }}<br>
             {{ form.answerOne(size=32) }}
@@ -23,7 +23,7 @@
 			<span style="color: red;">[{{ error }}]</span>
 		{% endfor %}
         <p>
-            {{ form.question.label }}<br>
+            <b>{{ form.question.label }}</b><br>
             {{ form.question(size=32) }}
         </p>
         {% for error in form.question.errors %}
@@ -40,11 +40,10 @@
 		</div>
 		<div class="inlineDiv">
 		<button class="button"><span>Submit Question</span></button> 
-		<p>When submitted, your question will be randomly available for anyone to answer for 48 hours
-		</p>
+		<p>When submitted, your question will be available for anyone to answer for 48 hours</p>
 		</div>
 	</form>
-	
+
 {% endblock %}
 
         <hr>
