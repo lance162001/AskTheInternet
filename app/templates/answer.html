@@ -10,7 +10,7 @@
 
 	<h1> Answer The Internet<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>	
 	{% if responses != None %}
-	<p><b>Results from last question:</b> {{responses}} </p>
+	<p><b>Results from last question:</b> <b>{{responses[0]}}</b> : {{responses[1]}} : <b>{{responses[2]}}</b> </p>
 	{% endif %}
 	<div class="wrapper">
 	<h2	style="display:inline;font-size:45px;"> {{ question.body }} </h2>
@@ -23,7 +23,7 @@
 		<button name="output" value="3" class="button"><span> Bad Question </span></button>
 
 	</form>
-		        <hr>
+		        <br>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>

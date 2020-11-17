@@ -34,6 +34,9 @@ def ask():
 @app.route('/answer', methods=['GET','POST'])
 def answer():
     getUser()
+    # testing
+    #question=Question(id="2",body="Looks good?",optionOne="No",optionTwo="Yes")
+    #return render_template('answer.html',question=question, responses=session['previousQ'])
     if session['initial']:
         session['initial']= False
         session['previousQ'] = None
@@ -48,7 +51,7 @@ def answer():
     if request.method == 'POST':
         question = db.session.query(Question).filter_by(id=session['question']).first()
         question.viewed.append(db.session.query(User).filter_by(ip=session['user']).first())
-        session['previousQ']="<br>"+str(question.answeredOne)+"</br>"+" : "+question.optionOne+" | "+question.optionTwo+" "+"<br>"+str(question.answeredTwo)+"</br>"
+        session['previousQ']=[str(question.answeredOne),question.optionOne+" | "+question.optionTwo,str(question.answeredTwo)]
         if request.form['output'] == "1":
             question.answeredOne=Question.answeredOne+1
             print("answeredOne+1")
@@ -95,11 +98,14 @@ def chooseQuestion():
     return question
 
 def getUser():
+    #testing
+    #session['user'] = "testing"
+    #session['qCount']=0
+    #return
+    
     if 'user' not in session:
         session['initial']=True
         userIP = str(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
-       # for testing
-       # userIP = "googoogagaaaa"
         session['user'] = userIP
         user = db.session.query(User).filter_by(ip=userIP).first()
         #if user's ip isn't in db, establish new user and commit to db
