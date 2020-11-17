@@ -2,7 +2,7 @@ import time
 from flask_sqlalchemy import SQLAlchemy
 from app import db
 from app.models import User, Question
-timetoPrune=60 * 3 - 1
+timetoPrune=60 * 60
 def prune():
     while True:
         print("Pruning Question Database...")
@@ -14,5 +14,7 @@ def prune():
                 pruned=True
         if pruned:
             db.session.commit()
+        
         print("Pruning complete, waiting ",timetoPrune," seconds.")
         time.sleep(timetoPrune)
+        
