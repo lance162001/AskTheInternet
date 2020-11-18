@@ -17,16 +17,13 @@ def ask():
     getUser()
     form = AskForm()
     if session['qCount'] >= 5:
-            flash("Cannot ask more questions until current questions expire")
-            return redirect('/')
-
+        return redirect('/')
     if form.validate_on_submit():
         q = Question(id=str(uuid.uuid4()),body=request.form['question'],optionOne=request.form['answerOne'],optionTwo=request.form['answerTwo'])
         q.author=db.session.query(User).filter_by(ip=session['user']).first()
         session['qCount']+=1
         db.session.add(q)
         db.session.commit()
-
         return redirect('/')
     return render_template('ask.html',form=form)
 
@@ -71,7 +68,8 @@ def answer():
             session['initial']=True
             return redirect('/')
         session['question']=question.id
-
+    else:
+        question = db.session.query(Question).filter_by(id=session['question']).first()
     return render_template('answer.html',question=question, responses=session['previousQ'])
 
 @app.route('/review')
@@ -100,7 +98,7 @@ def chooseQuestion():
 def getUser():
     #testing
     #session['user'] = "testing"
-    #session['qCount']=0
+    #session['qCount']=4
     #return
     
     if 'user' not in session:
@@ -113,12 +111,6 @@ def getUser():
             user = User(ip=userIP)
             db.session.add(user)
             db.session.commit()
-        #preload qCount in session dictionary
-
-        qCount=0
-        for q in user.asked:
-            qCount+=1
-        session['qCount']=qCount
 
     qCount=0
     for q in db.session.query(User).filter_by(ip=session['user']).first().asked:

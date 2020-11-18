@@ -7,45 +7,36 @@
 
 </head>
 <body>
-{% block content %}
     <h1>Ask The Internet<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>
 	
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
 		<div class="wrapper">
-		<div class="inlineDiv">
 
-		<p>
-            {{ form.answerOne.label }}<br>
-            {{ form.answerOne(size=32) }}
-        </p>
-		{% for error in form.answerOne.errors %}
+
+		<h2>
+			<b>{{ form.question.label }}</b><br>
+			{{ form.question(size=32) }}
+        </h2>
+		{% for error in form.question.errors %}
 			<span style="color: red;">[{{ error }}]</span>
-		{% endfor %}
-        <p>
-            <b>{{ form.question.label }}</b><br>
-            {{ form.question(size=32) }}
-        </p>
-        {% for error in form.question.errors %}
-			<span style="color: red;">[{{ error }}]</span>
-		{% endfor %}
-		<p>
-            {{ form.answerTwo.label }}<br>
-            {{ form.answerTwo(size=32) }}
-        </p>
-		{% for error in form.answerTwo.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-		{% endfor %}
-		</div>
-		</div>
+		{% endfor %}<br>Choices<br>
 		<div class="inlineDiv">
-		<button class="button"><span>Submit Question</span></button> 
-		<p>When submitted, your question will be available for anyone to answer for 48 hours</p>
+			<p> {{ form.answerOne(size=32) }} </p>
+				{% for error in form.answerOne.errors %}
+					<span style="color: red;">[{{ error }}]</span>
+				{% endfor %}
+			<p> {{ form.answerTwo(size=32) }} </p>
+				{% for error in form.answerTwo.errors %}
+					<span style="color: red;">[{{ error }}]</span>
+				{% endfor %}
+		</div>
+
+		<p>When submitted, your question will  be available for <b>anyone</b> to answer.</p>
+		<button class="button"><span>Submit Question</span></button>
+
 		</div>
 	</form>
-
-{% endblock %}
-
         <br>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
