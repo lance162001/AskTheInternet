@@ -1,6 +1,40 @@
 
 @import url('https://fonts.googleapis.com/css?family=Playfair+Display|Ubuntu+Mono&display=swap');
 
+
+
+.barheader {
+  width: 360px;
+  text-align:center;
+  font-style: italic;
+  font-weight: bolder;
+  font-size: 14px;
+  margin-top:50px;
+  
+  margin: auto;
+  width: 25%;
+}
+
+.bardiv {
+  height: 35px;
+  width: 360px;
+  color: #7ebdc2;
+  background: #7ebdc2;
+  margin: auto;
+  width: 25%;
+  line-height: 35px;	
+  margin-bottom:8px;
+  
+}
+
+.bar {
+  width:50%;
+  height: 35px;
+  background: #bb4430;
+  
+}
+
+
 .button {
   display: inline-block;
   border-radius: 4px;
@@ -15,7 +49,6 @@
   cursor: pointer;
   margin: 15px;
   font-family:'Ubuntu Mono';
-
 }
 
 .fakebutton {
@@ -64,7 +97,7 @@
  color: #f3dfa2;
  background-color: #003366;
  background-color: #231f20;
- 
+ margin: auto;
  }
 
 h1 {

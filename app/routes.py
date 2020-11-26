@@ -31,24 +31,22 @@ def ask():
 @app.route('/answer', methods=['GET','POST'])
 def answer():
     getUser()
-    # testing
-    #question=Question(id="2",body="Looks good?",optionOne="No",optionTwo="Yes")
-    #return render_template('answer.html',question=question, responses=session['previousQ'])
     if session['initial']:
         session['initial']= False
-        session['previousQ'] = None
+        previousQ = None
+        qRatio = None
         question=chooseQuestion()
         if question == None:
             flash("no available questions to answer!")
             session['initial']=True
             return redirect('/')
-
         session['question']=question.id
 
-    if request.method == 'POST':
+    elif request.method == 'POST':
         question = db.session.query(Question).filter_by(id=session['question']).first()
         question.viewed.append(db.session.query(User).filter_by(ip=session['user']).first())
         session['previousQ']=[str(question.answeredOne),question.optionOne+" | "+question.optionTwo,str(question.answeredTwo)]
+        print(session['previousQ'])
         if request.form['output'] == "1":
             question.answeredOne=Question.answeredOne+1
             print("answeredOne+1")
@@ -61,7 +59,7 @@ def answer():
 
         db.session.merge(question)
         db.session.commit()
-
+        previousQ=question
         question=chooseQuestion()
         if question == None:
             flash("no available questions to answer!")
@@ -70,7 +68,11 @@ def answer():
         session['question']=question.id
     else:
         question = db.session.query(Question).filter_by(id=session['question']).first()
-    return render_template('answer.html',question=question, responses=session['previousQ'])
+        previousQ = None
+        qRatio = None
+    if previousQ != None:
+        qRatio=100*previousQ.answeredOne/previousQ.popularity
+    return render_template('answer.html',question=question, previous=previousQ,qRat=qRatio)
 
 @app.route('/review')
 def review():
@@ -81,26 +83,20 @@ def review():
 
 @app.route('/faq')
 def faq():
+
     top=db.session.query(Question).filter(Question.popularity!=0).order_by(Question.popularity.desc()).limit(10).all()
     return render_template('faq.html',questions=top)
 
 def chooseQuestion():
     #if you want a pure random question
     #return Question.query.order_by(func.random()).first()
-
     #filter out questions that user has made or has already seen, then take a random question. Ideally this will trend towards more popular stuff but for now this works
     q = db.session.query(Question).options(db.joinedload(Question.viewed))
     user = db.session.query(User).filter_by(ip=session['user']).first()
     question = q.filter(and_(Question.author!=user, ~Question.viewed.contains(user) )).order_by(func.random()).first()
-
     return question
 
 def getUser():
-    #testing
-    #session['user'] = "testing"
-    #session['qCount']=4
-    #return
-    
     if 'user' not in session:
         session['initial']=True
         userIP = str(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
@@ -111,8 +107,16 @@ def getUser():
             user = User(ip=userIP)
             db.session.add(user)
             db.session.commit()
-
+            print(user," has been added!")
+    else:
+        user = db.session.query(User).filter_by(ip=session['user']).first()
+        if user == None:
+            del session['user']
+            return getUser()
     qCount=0
-    for q in db.session.query(User).filter_by(ip=session['user']).first().asked:
-        qCount+=1
+    
+    questions=user.asked
+    if questions != None:
+        for q in questions:
+            qCount+=1
     session['qCount'] = qCount

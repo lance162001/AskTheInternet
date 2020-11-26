@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
 
-<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}" media="screen">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css?q=2') }}" media="screen">
 <link rel="shortcut icon" sizes="16x16" href="{{ url_for('static',filename='icon.png') }}">
 <title>AskTheInternet | Review</title>
 
@@ -12,11 +12,16 @@
 	<h1> Review The Internet (Your Questions)<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>	
 	
 	{% for question in questions %}
-	<p></p>
 	<div class="wrapper">
-	<h2	style="display:inline;font-size:35px;"> {{ question.body }} </h2>
-	<p> {{question.answeredOne}} answers for: {{question.optionOne}} </p>
-	<p> {{question.answeredTwo}} answers for: {{question.optionTwo}} </p>
+	<div class ="barheader">
+		<h3>{{question.body}}</h3>
+		<p> answered <span style="font-size:24px;">{{question.popularity}}</span> time{% if question.popularity != 1 %}s{% endif %}</p>
+		<p style="text-align:left;"> {{question.optionOne}}<span style="float:right;"> {{question.optionTwo}} </span></p>
+	</div>
+	<div class="bardiv" > 
+		<div class="bar" {% if question.popularity != 0%} style="width:{{100*question.answeredOne/question.popularity}}%;" {% endif %}> 
+		</div>
+	</div>
 	</div>
 	{% endfor %}
 

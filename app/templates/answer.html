@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
 
-<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}" media="screen">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css?q=2') }}" media="screen">
 <link rel="shortcut icon" sizes="16x16" href="{{ url_for('static',filename='icon.png') }}">
 <title>ANSWERTheInternet</title>
 
@@ -10,9 +10,17 @@
 <body>
 
 	<h1> Answer The Internet<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>	
-	{% if responses != None %}
-	<p><b>Results from last question:</b> <b>{{responses[0]}}</b> : {{responses[1]}} : <b>{{responses[2]}}</b> </p>
+	{% if previous != None %}
+	<div class ="barheader">
+		<h3>{{previous.body}}</h3>
+		<p> answered <span style="font-size:24px;">{{previous.popularity}}</span> time{% if previous.popularity != 1 %}s{% endif %}</p>
+		<p style="text-align:left;"> {{previous.optionOne}}<span style="float:right;"> {{previous.optionTwo}} </span></p>
+	</div>
+	<div class="bardiv" > 
+		<div class="bar" style="width:{{qRat}}%;">  </div>
+	</div>
 	{% endif %}
+
 	<div class="wrapper">
 	<h2	style="display:inline;font-size:45px;"> {{ question.body }} </h2>
 	</div>

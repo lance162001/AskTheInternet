@@ -12,14 +12,20 @@
 	<h1> Frequently Answered Questions (that are still active)<button class="button" onclick="window.location.href = '/';"><span> Home </span></button></h1>	
 	<p> <i>"What's the point?"</i> : <b>morbid curiosity and boredom mostly.</b> </p>
 	<p><i>"I don't like how awful these questions are!"</i> : <b>There's a button for that.</b> </p>
-	<p><i>"Who are you, who are so wise in the ways of (computer) science?"</i> : <b>https://github.com/lance162001 , Discord: Ecnal#8924 </b></p>
+	<p><i>"Who are you, who are so wise in the ways of (computer) science?"</i> <a href="https://github.com/lance162001/AskTheInternet"><img src = "/static/GitHub-Mark-Light-32px.png"></a> | <img src = "/static/Discord-Logo-White.png"width=32px height=32px>Ecnal#8924</p>
 	{% for question in questions %}
-	<p></p>
 	<div class="wrapper">
-	<h2	style="display:inline;font-size:35px;"> {{ question.body }} </h2>
-	<p> {{question.answeredOne}} answers for: {{question.optionOne}} </p>
-	<p> {{question.answeredTwo}} answers for: {{question.optionTwo}} </p>
+	<div class ="barheader">
+		<h3>{{question.body}}</h3>
+		<p> answered <span style="font-size:24px;">{{question.popularity}}</span> time{% if question.popularity != 1 %}s{% endif %}</p>
+		<p style="text-align:left;"> {{question.optionOne}}<span style="float:right;"> {{question.optionTwo}} </span></p>
 	</div>
+	<div class="bardiv" > 
+		<div class="bar" style="width:{{100*question.answeredOne/question.popularity}}%;"> 
+		</div>
+	</div>
+	</div>
+	
 	{% endfor %}
 
 		        <br>
